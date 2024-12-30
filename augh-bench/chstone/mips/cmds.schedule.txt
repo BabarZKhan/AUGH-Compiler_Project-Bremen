@@ -1,0 +1,29 @@
+
+commands-disp
+
+load
+
+#hier disp-skel
+#hier disp-tree
+hier disp-details
+hier time update
+hier time disp
+hier clockcycles
+
+resources-build
+resources-view
+sched schedule
+
+#hier disp-skel
+hier disp-details
+hier time update
+hier time disp
+hier clockcycles
+
+postprocess
+
+hier time disp
+
+techno eval
+
+

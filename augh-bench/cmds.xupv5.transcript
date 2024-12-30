@@ -1,0 +1,33 @@
+
+commands-disp
+
+netlist objective-synth
+netlist comps-inline yes
+#netlist simp-verbose yes
+#techno cmd use-dsp no
+#map retiming-en
+map postmap-timing
+
+#build clkdiv 10
+#target-freq 300M
+#map fsmstates-dup +5
+
+load
+hier upd
+
+#hier disp-tree
+hier disp-details
+hier time disp
+hier clockcycles
+
+#map dump-states-en dump-states
+
+postprocess
+
+techno eval
+
+vhdl
+
+plugin cmd xilinx gen-xst-project
+
+augh-resource

@@ -1,0 +1,16 @@
+
+/*/bench/**
+!/*/bench/config
+
+adpcm/adpcm
+aes/aes
+blowfish/bf
+dfadd/dfadd
+dfmul/dfmul
+dfdiv/dfdiv
+dfsin/dfsin
+gsm/gsm
+jpeg/jpeg
+mips/mips
+motion/mpeg2
+sha/sha

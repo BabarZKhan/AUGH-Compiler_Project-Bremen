@@ -1,0 +1,42 @@
+
+commands-disp
+
+techno set-board xupv5
+
+build fromboard stdin
+build fromboard stdout
+
+# Load the source files as component models
+loadmod node pap-node.c
+loadmod leaf pap-leaf.c
+
+impmod forall hier upd
+
+# Instantiate the component models built from C
+build inst node node0
+build inst leaf leaf_left leaf_right
+
+# Connections between instances
+build link node0.stream_left0  leaf_left.stream1
+build link node0.stream_left1  leaf_left.stream0
+build link node0.stream_right0  leaf_right.stream1
+build link node0.stream_right1  leaf_right.stream0
+
+# Top-level interfaces
+build link stdin  node0.stream0
+build link stdout node0.stream1
+
+# And a bonus: direct connection from DIP switches to the board LEDs
+build fromboard xupv5_leds8
+build fromboard xupv5_dipsw
+build link xupv5_leds8 xupv5_dipsw
+
+impmod forall postprocess
+impmod sizes-compute
+impmod sizes-print
+impmod forall vhdl
+
+plugin cmd xilinx gen-xst-project
+
+augh-resource
+

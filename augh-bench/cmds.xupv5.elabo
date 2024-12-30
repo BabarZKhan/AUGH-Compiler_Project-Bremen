@@ -1,0 +1,67 @@
+
+commands-disp
+
+netlist objective-synth
+netlist comps-inline yes
+#techno cmd use-dsp no
+#map retiming-en
+map postmap-timing
+
+#build clkdiv 10
+#target-freq 300M
+#map fsmstates-dup +5
+
+load
+hier upd
+
+
+
+#hier auto-asg-propag no
+hier auto-asg-propag-symuse
+#hier auto-asg-circular no
+#hier auto-insert-tempregs-inbb
+#hier actsimp-verbose
+
+#core fd-skip-wire-mux-seq
+core fd-skip-unroll-part
+#core fd-skip-unroll-full
+#core fd-skip-scalar
+#core fd-skip-rom-inline
+#core fd-skip-mem-r
+#core fd-skip-addops
+#hier en-overbig-loop-unroll
+
+core debug-show-avail-fd
+core debug-show-select-fd
+core debug-show-applied-fd
+
+#core fd-weight-exact
+core elabo-fd-max 1
+#core weigths-without-annotations
+#core elabo-iter-max 20
+
+sh rm fork-output.txt
+forksynth redirect both append fork-output.txt
+sh touch fork-output.txt
+
+core graph-file open elaboration-data.txt
+#core dupimplem redirect none
+core dupimplem redirect file /dev/null
+core elaborate
+
+
+
+hier time upd
+postprocess
+
+hier disp-details
+hier time disp
+hier clockcycles
+
+techno eval
+
+vhdl
+
+plugin cmd xilinx gen-xst-project
+
+augh-resource

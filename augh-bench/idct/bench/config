@@ -1,0 +1,3 @@
+idct
+idct.c
+32 input_vectors.bin 4 8 output_vectors.bin 1 5000

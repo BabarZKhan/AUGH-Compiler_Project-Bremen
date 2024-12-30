@@ -1,0 +1,30 @@
+
+load
+
+commands-disp
+target-freq 100M
+hwlimit lut6:51840:dff:51840  # Total = 69120  75% = 51840
+
+core fd-skip-unroll-part
+
+#forksynth debug-child-pause-en
+
+# For debug
+sh rm fork-output.txt
+forksynth redirect both append fork-output.txt
+sh touch fork-output.txt
+
+# Here the real process begins.
+
+core graph-file open elaboration-data.txt
+core elaborate
+
+postprocess
+
+#hier disp-skel
+hier time upd
+hier time disp
+hier clockcycles
+
+techno eval
+

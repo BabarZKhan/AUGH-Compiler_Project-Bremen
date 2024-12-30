@@ -1,0 +1,69 @@
+
+commands-disp
+
+load
+
+target-freq 100M
+hwlimit lut6:51840:dff:51840  # Total = 69120  75% = 51840
+#op multiport-en
+op multiport-dis
+
+core fd-skip-unroll-part
+
+# For debug
+sh rm fork-output.txt
+testsynth redirect both append fork-output.txt
+sh touch fork-output.txt
+
+# Here the real process begins.
+
+op detect
+
+preprocess
+
+
+hier build
+#hier disp-skel
+#hier disp-tree
+hier disp-details
+hier time update
+hier time disp
+hier clockcycles
+
+resources-build
+#resources-view
+sched schedule
+#sched view-miss-hw
+#core fd-skip-mem
+#core fd-build
+#core fd-view
+#die
+
+hier node-bb merge
+hier node-bb clean
+hier detect-structures
+#hier disp-skel
+hier disp-details
+hier time update
+hier time disp
+hier clockcycles
+
+postprocess
+
+hier time disp
+hier clockcycles
+hier latency worse 8
+
+gen-fsm
+techno eval
+
+# FINAL GENERATION
+
+vhdl-structure structure
+#vhdl-control control
+#vhdl-command command
+#vhdl-behaviour behaviour
+#vhdl-compact compact
+
+#save-fgs fgs.sl
+

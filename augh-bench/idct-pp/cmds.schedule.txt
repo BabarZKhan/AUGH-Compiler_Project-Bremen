@@ -1,0 +1,131 @@
+
+load
+
+commands-disp
+#target-freq 100M
+#hwlimit lut6:13000:dff:13000
+
+# Here the real process begins.
+
+#accu-insert
+
+#op add mul:1
+#op add add:8/sub:8/mul:6
+#op add add:2/sub:3/mul:3
+#op add add:4/sub:4/mul:6
+
+#op add add:20/sub:20/mul:20
+#op add add:10/sub:10/mul:10
+op add add:64/sub:64/mul:64
+
+
+hier disp-tree
+#hier disp-skel
+hier disp-details
+hier time update
+hier time disp
+hier clockcycles
+
+
+
+#pause
+
+#array-replace
+
+hier node-switch find line 146 wire one-cycle
+hier upd
+hier node-switch find line 145 wire one-cycle
+hier upd
+
+hier node-loop find line 112 unroll-seq full  # Scale
+hier node-loop find line 117 unroll-seq full  # First IDCT
+hier node-loop find line 123 unroll-seq full  # Transpose
+hier node-loop find line 124 unroll-seq full  # Transpose
+hier node-loop find line 129 unroll-seq full  # Second IDCT
+hier node-loop find line 136 unroll-seq full  # Descale
+hier node-loop find line 137 unroll-seq full  # Descale
+hier node-loop find line 151 unroll-seq full  # Saturate
+hier node-loop find line 152 unroll-seq full  # Saturate
+
+hier upd
+
+op pp-convert-direct stdin
+op pp-convert-direct stdout
+
+op mem-add-d idct_z1
+op mem-add-d idct_z2
+op mem-add-d idct_z3
+
+op mem-add-d idct_2d_data2
+op mem-add-d idct_2d_data3
+op mem-add-d idct_2d_data4
+op mem-add-d idct_2d_data5
+op mem-add-d idct_2d_data6
+
+
+
+#hier build
+#hier disp-skel
+hier disp-details
+hier time update
+hier time disp
+hier clockcycles
+
+
+
+sched depend-dump file sched-depend-dump
+
+resources-build
+resources-view
+sched schedule
+#sched view-miss-hw
+#core fd-skip-mem
+#core fd-build
+#core fd-view
+#die
+
+#pause
+
+#vpn-clean-unused
+#hier build
+#hier disp-skel
+hier disp-details
+hier time update
+hier time disp
+hier clockcycles
+
+# Give control to the user
+#manual
+
+postprocess
+
+hier time disp
+hier clockcycles
+hier latency worse 8
+
+
+#noerr hier node-loop list
+#noerr hier node-loop find idx 3 disp
+#noerr sched view
+
+#echo Timings of the node :
+#noerr hier node-loop find line 105 disp-time  # Input FIFO
+#noerr hier node-loop find line 109 disp-time  # Output FIFO
+
+#noerr hier node-for find line 44 disp-time  # SCALE
+#noerr hier node-for find line 103 disp-time  # Input to the second big loop
+
+#noerr hier node-for find line 99 disp-time  # First big loop
+#noerr hier node-for find line 191 disp-time  # Second big loop
+
+#noerr hier node-if find line 181 disp-time
+#noerr hier node-if find line 180 disp-time
+
+#noerr hier node-for find line 190 disp-time  # DESCALE
+
+
+techno eval
+
+vhdl
+
+

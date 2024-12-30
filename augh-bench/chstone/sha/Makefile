@@ -1,0 +1,107 @@
+
+CFILE = sha.c
+
+AUGH_TECHNO = -p xilinx -chip xc7v585t -speed 3 -package ffg1157 -freq 100M
+
+# AUGH Parameters
+#AUGH_PARAMS = $(AUGH_TECHNO)
+#AUGH_PARAMS = $(AUGH_TECHNO) -script cmds.elaborate.txt -chip-ratio 1%
+#AUGH_PARAMS = $(AUGH_TECHNO) -script cmds.elaborate.txt -chip-ratio 80%
+#AUGH_PARAMS = $(AUGH_TECHNO) -script cmds.schedule.txt
+AUGH_PARAMS = $(AUGH_TECHNO) -script cmds.transcript.txt
+
+# Debug tools tu use with AUGH
+AUGH_DBG =
+ifdef GDB
+	AUGH_DBG = gdb --args
+endif
+ifdef VALGRIND
+	AUGH_DBG = valgrind --leak-check=full
+endif
+
+# Options for GHDL
+GHDL_PARAMS = --workdir=work
+
+
+.PHONY : default augh \
+	xupv5 xupv5-augh xupv5-bitstream xupv5-program xupv5-pipe xupv5-check \
+	vectors gcov simulate simulate1
+
+default:
+	echo "Please specify a target."
+
+augh:
+	rm -rf vhdl/*.vhd
+	$(AUGH_DBG) augh -v $(AUGH_PARAMS) $(CFILE)
+
+xupv5:
+	$(MAKE) xupv5-augh
+	$(MAKE) xupv5-bitstream
+	$(MAKE) xupv5-program
+	$(MAKE) xupv5-pipe
+	$(MAKE) xupv5-check
+
+# WARNING Take care to the buffer size: must be big enough to avoid overrun (PC sends faster than design can process)
+# So: insert a big circular buffer, or implement a handshaking protocol (and use compatible software on the PC)
+xupv5-augh:
+	rm -rf vhdl xstprj
+	#augh -v -p xilinx -board xupv5 -DSTDIO8 -script ../cmds.xupv5.transcript $(CFILE)
+	#augh -v -p xilinx -board xupv5 -DSTDIO8 -DASKSEND -script ../cmds.xupv5.transcript $(CFILE)
+	#augh -v -p xilinx -board xupv5 -DSTDIO8 -ex "build buffer -compmod uart -in circbuf 5000" -script ../cmds.xupv5.transcript $(CFILE)
+	augh -v -p xilinx -board xupv5 -DSTDIO8 -DASKSEND -script ../cmds.xupv5.elabo $(CFILE)
+	#augh -v -p xilinx -board xupv5 -DSTDIO8 -DASKSEND -ex "build clkdiv 4" -script ../cmds.xupv5.elabo $(CFILE)
+
+xupv5-bitstream:
+	$(MAKE) -C xstprj
+
+xupv5-program:
+	$(MAKE) -C xstprj program
+
+xupv5-pipe:
+	#~/Sandbox/serial/serial -if input_vectors.bin -of output_xupv5.bin -out-max `stat -c '%s' output_vectors.bin` -in-us 50000
+	~/Sandbox/serial/serial -if input_vectors.bin -of output_xupv5.bin -out-max `stat -c '%s' output_vectors.bin` -asksend
+	#~/Sandbox/serial/serial -if input_vectors.bin -of output_xupv5.bin
+
+xupv5-check:
+	cat output_vectors.bin | hexdump $(HEX_FLAGS) > output_vectors.hex
+	cat output_xupv5.bin | hexdump $(HEX_FLAGS) > output_xupv5.hex
+	diff -q output_xupv5.hex output_vectors.hex
+	echo "Test vectors: SUCCESS"
+
+vectors:
+	echo "Test vectors..."
+	gcc --std=gnu99 -o test_vectors test_vectors.c
+	./test_vectors
+	echo "System SHA     : "`sha1sum input_vectors_merged.raw`
+	echo "System SHA1    : "`sha1sum input_vectors_merged.raw`
+	echo "System SHA224  : "`sha224sum input_vectors_merged.raw`
+	echo "System SHA256  : "`sha256sum input_vectors_merged.raw`
+	echo "System SHA384  : "`sha384sum input_vectors_merged.raw`
+	echo "System SHA512  : "`sha512sum input_vectors_merged.raw`
+	echo "CHStone check  : 006a5a3793dc94852c41211263f7ba43ad73f922"
+	gcc --std=gnu99 -I$(AUGH_HOME)/include -DGCC_COMPIL -o sha sha.c
+	cat input_vectors.bin | ./sha > output_vectors.bin
+
+vectors-simu:
+	echo "Test vectors from simu..."
+	cat bench/one/simu/log.simu | sed -r -n 's/^.*Output.*value (.*) at.*$$/\1/p' > output_vectors_simu.txt
+
+exec:
+	gcc --std=gnu99 -I$(AUGH_HOME)/include -DGCC_COMPIL -g -o sha sha.c
+	gdb --args ./sha
+
+gcov:
+	gcc --std=gnu99 -I$(AUGH_HOME)/include -DGCC_COMPIL -fprofile-arcs -ftest-coverage -o sha sha.c
+	cat input_vectors.bin | ./sha > /dev/null
+	gcov sha.c
+
+simulate:
+	$(MAKE) -C vhdl -f ../Makefile simulate1
+
+simulate1:
+	mkdir -p work
+	# Only compile the entire design ?
+	ghdl -a $(GHDL_PARAMS) *.vhd
+	# Generate the entire simulator ?
+	#ghdl -e $OPTIONS top
+

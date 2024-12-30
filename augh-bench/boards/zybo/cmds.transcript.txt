@@ -1,0 +1,32 @@
+
+commands-disp
+
+#build datacom-verbose
+#hier actsimp-verbose
+
+load
+hier upd
+
+#hier disp-skel
+#hier disp-tree
+hier disp-details
+hier time disp
+hier clockcycles
+
+postprocess
+
+#hier time upd
+hier time disp
+#hier clockcycles
+
+#hier disp-tree
+#hier disp-skel
+
+techno eval
+
+vhdl
+
+#plugin cmd xilinx gen-xst-project
+plugin cmd xilinx gen-vivado-project
+
+augh-resource

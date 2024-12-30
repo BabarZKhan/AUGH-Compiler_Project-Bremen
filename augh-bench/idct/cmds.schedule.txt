@@ -1,0 +1,131 @@
+
+load
+
+commands-disp
+target-freq 100M
+hwlimit lut6:13000:dff:13000
+
+# Here the real process begins.
+
+#accu-insert
+
+#op add mul:1
+#op add add:8/sub:8/mul:6
+#op add add:2/sub:3/mul:3
+#op add add:4/sub:4/mul:6
+
+#op add add:20/sub:20/mul:20
+#op add add:10/sub:10/mul:10
+
+
+#hier disp-skel
+hier disp-details
+hier time update
+hier time disp
+hier clockcycles
+
+#hier node-for list
+#hier node-if list
+
+#pause
+
+#array-replace
+
+# Cable the conditions in the hierarchical order
+
+#hier node-if find line 177 cable-mux-oneact
+#hier node-bb merge
+#hier node-if find line 176 cable-mux-oneact
+#hier node-bb merge
+
+# Unroll the FOR loops in the hierarchical order
+
+#hier node-for find line 44 unroll-seq full  # SCALE
+#hier node-for find line 103 unroll-seq full  # Input to the second big loop
+#hier node-for find line 179 unroll-seq full  # DESCALE
+
+#array-replace
+
+#hier node-for find line 38 unroll-seq full  # Input FIFO
+#hier node-for find line 183 unroll-seq full  # Output FIFO
+
+#hier node-for find line 99 unroll-seq 2  # First big loop
+#hier node-for find line 181 unroll-seq 2  # Second big loop
+
+#array-replace
+
+#hier node-bb merge
+
+
+
+hier node-loop find line 231 unroll-seq full
+core fd-build
+core fd-view
+
+die
+
+
+
+#hier build
+#hier disp-skel
+hier disp-details
+hier time update
+hier time disp
+hier clockcycles
+
+
+
+resources-build
+resources-view
+sched schedule
+#sched view-miss-hw
+#core fd-skip-mem
+#core fd-build
+#core fd-view
+#die
+
+#pause
+
+#vpn-clean-unused
+#hier build
+#hier disp-skel
+hier disp-details
+hier time update
+hier time disp
+hier clockcycles
+
+# Give control to the user
+#manual
+
+postprocess
+
+hier time disp
+hier clockcycles
+hier latency worse 8
+
+
+#noerr hier node-loop list
+#noerr hier node-loop find idx 3 disp
+#noerr sched view
+
+#echo Timings of the node :
+#noerr hier node-loop find line 105 disp-time  # Input FIFO
+#noerr hier node-loop find line 109 disp-time  # Output FIFO
+
+#noerr hier node-for find line 44 disp-time  # SCALE
+#noerr hier node-for find line 103 disp-time  # Input to the second big loop
+
+#noerr hier node-for find line 99 disp-time  # First big loop
+#noerr hier node-for find line 191 disp-time  # Second big loop
+
+#noerr hier node-if find line 181 disp-time
+#noerr hier node-if find line 180 disp-time
+
+#noerr hier node-for find line 190 disp-time  # DESCALE
+
+
+techno eval
+
+vhdl
+
+

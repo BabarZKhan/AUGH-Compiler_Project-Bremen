@@ -1,0 +1,30 @@
+
+commands-disp
+#hier actsimp-verbose
+
+hier auto-asg-propag-symuse
+
+techno set-techno virtex-5
+
+load uart_rx.c
+hier upd
+
+#hier disp-tree
+
+hier cram BEG_CLK_CYCLE END_CLK_CYCLE
+hier upd
+
+#hier disp-tree
+
+resources-build
+sched schedule
+
+hier disp-tree
+
+postprocess
+
+#hier disp-tree
+techno eval
+
+vhdl
+

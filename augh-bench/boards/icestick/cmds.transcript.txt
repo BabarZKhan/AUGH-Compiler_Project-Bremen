@@ -1,0 +1,35 @@
+
+commands-disp
+
+#build datacom-verbose
+#hier actsimp-verbose
+
+load
+
+hier disp-tree -o hier-load.txt
+
+hier upd
+
+hier disp-tree -o hier-simp.txt
+
+hier disp-details
+hier time disp
+hier clockcycles
+
+postprocess
+
+#hier time upd
+hier time disp
+#hier clockcycles
+
+#hier disp-tree -o hier-map.txt
+
+techno eval
+
+netlist vhd2vl-friendly
+netlist objective-human
+
+vhdl
+
+techno cmd gen-yosys-project
+

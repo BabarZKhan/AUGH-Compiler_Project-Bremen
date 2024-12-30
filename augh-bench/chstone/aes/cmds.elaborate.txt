@@ -1,0 +1,56 @@
+
+commands-disp
+
+load
+
+#hwlimit lut6:51840:dff:51840:dsp48e:64  # Total = 69120  75% = 51840
+
+#core fd-skip-wire-mux-seq
+core fd-skip-unroll-part
+#core fd-skip-unroll-full
+#core fd-skip-scalar
+#core fd-skip-rom-inline
+#core fd-skip-mem-r
+#core fd-skip-addops
+#hier en-overbig-loop-unroll
+
+#hier auto-asg-propag no
+#hier auto-asg-propag-symuse
+#hier auto-asg-circular no
+#hier auto-insert-tempregs-inbb
+#hier actsimp-verbose
+
+core debug-show-avail-fd
+core debug-show-select-fd
+core debug-show-applied-fd
+
+#core fd-weight-exact
+core elabo-fd-max 1
+#core weigths-without-annotations
+#core elabo-iter-max 20
+
+#forksynth debug-child-pause-en
+
+# For debug
+sh rm fork-output.txt
+forksynth redirect both append fork-output.txt
+sh touch fork-output.txt
+
+# Here the real process begins.
+
+core graph-file open elaboration-data.txt
+#core dupimplem redirect file dupImplem.stdout
+core dupimplem redirect none
+
+core elaborate
+
+postprocess
+
+#hier disp-skel
+hier time upd
+hier time disp
+hier clockcycles
+
+techno eval
+
+augh-resource

@@ -1,0 +1,52 @@
+
+commands-disp
+
+#build clkdiv 10
+
+load
+
+#hier disp-tree
+
+hier upd
+
+#target-freq 300M
+#map fsmstates-dup +5
+map postmap-timing
+
+netlist comps-inline yes
+netlist tb-disp-cycles no
+#netlist objective-simu yes
+
+#techno cmd use-dsp no
+
+#hier disp-skel
+#hier disp-tree
+hier disp-details
+hier time disp
+hier clockcycles
+
+#map dump-states-en map-dump-states
+#map retiming-en
+
+hier time upd
+
+postprocess
+
+#netlist test-retiming
+
+hier time upd
+hier time disp
+#hier clockcycles
+
+#hier disp-tree
+#hier disp-skel
+
+techno eval
+
+vhdl
+
+#netlist tb-gen-simple -odir vhdl input_vectors.bin 4 output_vectors.bin 1 2000
+
+plugin cmd xilinx gen-xst-project
+
+augh-resource

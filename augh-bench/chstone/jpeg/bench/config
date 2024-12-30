@@ -1,0 +1,3 @@
+jpeg
+main.c
+8 input_vectors.jpg 1 8 output_vectors.bin 1 1000000

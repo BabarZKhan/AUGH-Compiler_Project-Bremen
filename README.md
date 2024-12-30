@@ -23,19 +23,4 @@ See the GNU Affero General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program. If not, see <http://www.gnu.org/licenses/>.
 
-Some libraries and modules AUGH is built with are distributed under
-another license. In particular:
-The source code in the directory "src/libraries/alliance" is distributed
-under the terms of the GNU Library General Public License.
-The source code in the directory "src/libraries/cgs_check" is distributed
-under the terms of the GNU General Public License.
-The source code in the directory "src/libraries/ughparser",
-except the files "c2hier.c" and "c2hier.h",
-is distributed under the terms of the GNU General Public License.
-
-You should have received a copy of the GNU Affero General Public License
-along with this program. If not, see <http://www.gnu.org/licenses/>.
-
-You should have received a copy of the GNU Library General Public License
-along with this program. If not, see <http://www.gnu.org/licenses/>.
  

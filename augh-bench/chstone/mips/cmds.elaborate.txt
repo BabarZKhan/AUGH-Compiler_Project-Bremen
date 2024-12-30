@@ -1,0 +1,26 @@
+
+commands-disp
+
+load
+
+
+# For debug
+#forksynth debug-child-pause-en
+sh rm fork-output.txt
+forksynth redirect both append fork-output.txt
+sh touch fork-output.txt
+
+# Here the real process begins.
+
+core graph-file open elaboration-data.txt
+core elaborate
+
+postprocess
+
+#hier disp-skel
+hier time upd
+hier time disp
+hier clockcycles
+
+techno eval
+

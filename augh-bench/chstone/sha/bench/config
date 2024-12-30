@@ -1,0 +1,3 @@
+sha
+sha.c
+32 input_vectors.bin 4 32 output_vectors.bin 4 1000000

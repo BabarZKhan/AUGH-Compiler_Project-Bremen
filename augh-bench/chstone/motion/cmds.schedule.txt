@@ -1,0 +1,50 @@
+
+load
+
+commands-disp
+target-freq 100M
+hwlimit lut6:51840:dff:51840  # Total = 69120  75% = 51840
+sched bypass-dis
+#op multiport-en
+op multiport-dis
+
+
+# Here the real process begins.
+
+op detect
+
+preprocess
+
+
+hier build
+#hier disp-skel
+#hier disp-tree
+hier disp-details
+hier time update
+hier time disp
+hier clockcycles
+
+resources-build
+#resources-view
+sched schedule
+#sched view-miss-hw
+#core fd-skip-mem
+#core fd-build
+#core fd-view
+#die
+
+#hier disp-skel
+hier disp-details
+hier time update
+hier time disp
+hier clockcycles
+
+postprocess
+
+hier time disp
+hier clockcycles
+hier latency worse 8
+
+techno eval
+
+vhdl

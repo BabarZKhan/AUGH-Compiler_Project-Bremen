@@ -1,0 +1,21 @@
+
+commands-disp
+
+load
+
+# Perform simplification of all pipeline stages
+impmod forall hier upd
+
+# Perform mapping and netlist simplifications
+impmod forall postprocess
+
+# Display the size of each component model
+impmod sizes-compute
+impmod sizes-print
+
+# Generate all VHDL files
+impmod forall vhdl
+
+# Generate the back-end synthesis project files
+backend-gen-prj
+

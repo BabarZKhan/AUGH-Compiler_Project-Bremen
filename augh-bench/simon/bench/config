@@ -1,0 +1,3 @@
+simon
+simon.c
+32 input_vectors.bin 4 32 output_vectors.bin 4 10000

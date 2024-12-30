@@ -1,0 +1,63 @@
+
+commands-disp
+
+load
+
+map postmap-timing
+
+#core fd-skip-wire-mux-seq
+core fd-skip-unroll-part
+#core fd-skip-unroll-full
+#core fd-skip-scalar
+#core fd-skip-rom-inline
+#core fd-skip-mem-r
+#core fd-skip-addops
+#hier en-overbig-loop-unroll
+
+core debug-show-avail-fd
+core debug-show-select-fd
+core debug-show-applied-fd
+
+#core elabo-pause-end-iter
+
+#hier auto-asg-propag no
+#hier auto-asg-propag-symuse
+#hier auto-asg-circular no
+#hier auto-insert-tempregs-inbb
+#hier actsimp-verbose
+
+#core fd-weight-exact
+core elabo-fd-max 1
+#core weigths-without-annotations
+#core elabo-iter-max 20
+
+#forksynth debug-child-pause-en
+
+# For debug
+noerr sh rm fork-output.txt
+forksynth redirect both append fork-output.txt
+sh touch fork-output.txt
+
+# Here the real process begins.
+
+#op add add:3/sub:3/mul:3
+
+core graph-file open elaboration-data.txt
+core dupimplem redirect none
+core elaborate
+
+postprocess
+
+#hier disp-tree
+hier time upd
+hier time disp
+hier clockcycles
+
+techno eval
+
+vhdl
+
+plugin cmd xilinx gen-xst-project
+
+augh-resource
+

@@ -1,0 +1,3 @@
+idct-mt
+idct-mt.c
+32 ../idct/input_vectors.bin 4 8 ../idct/output_vectors.bin 1 5000
